@@ -5,4 +5,14 @@
   ansible.builtin.debug:
     msg: "this is storage task"
 
-- import_tasks: check_root_device.yml
+- import_tasks: detect_root.yml
+
+
+- name: meta test
+  ansible.builtin.meta: end_role
+  when: not storage_current_root_is_sdcard
+
+- name: going to format disk
+  ansible.builtin.debug:
+    msg: "going to format disk"
+
