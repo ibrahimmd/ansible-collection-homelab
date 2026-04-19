@@ -4,3 +4,5 @@
 - name: storage test
   ansible.builtin.debug:
     msg: "this is storage task"
+
+- import_tasks: check_root_device.yml

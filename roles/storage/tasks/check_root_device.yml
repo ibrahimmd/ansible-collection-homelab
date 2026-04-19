@@ -1,0 +1,9 @@
+- name: check mounted device for root partition
+  ansible.builtin.command: findmnt -o source -n /
+  register: storage_check_root_device
+  changed_when: false
+
+- name: check if sdcard is used for mounted root partition
+  ansible.builtin.set_fact:
+    storage_setup_root_is_sdcard: "{{ 'mmcblk' in storage_check_root_device.stdout }}"
+
