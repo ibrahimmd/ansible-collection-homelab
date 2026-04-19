@@ -10,7 +10,7 @@
 
 - name: meta test
   ansible.builtin.meta: end_role
-  when: not storage_current_root_is_sdcard
+  when: not storage_current_root_device_is_sdcard
 
 - name: going to format disk
   ansible.builtin.debug:
