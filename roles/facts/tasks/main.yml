@@ -1,0 +1,9 @@
+#SPDX-License-Identifier: MIT-0
+---
+- name: ensure ansible local facts directory exists
+  ansible.builtin.file:
+    path: /etc/ansible/facts.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'

@@ -1,18 +1,33 @@
-#SPDX-License-Identifier: MIT-0
 ---
 # tasks file for storage
 - name: storage test
   ansible.builtin.debug:
     msg: "this is storage task"
 
-- import_tasks: detect_root.yml
+- name: gather local facts
+  ansible.builtin.setup:
+    filter: ansible_local
+
+- name: detect current root boot device
+  import_tasks: detect_root.yml
+
+# - name: end role if current root device is sdcard
+#   ansible.builtin.meta: end_role
+#   when: not storage_current_root_device_is_sdcard
+
+# - import_tasks: detect_disk.yml
+
+- name: detect storage device
+  import_tasks: detect_device.yml
+  when: storage_root_device_is_sdcard
+
+- name: check if there are any mounted partitions for storage device
+  ansible.builtin.shell:
+    cmd: lsblk -n -o NAME,MOUNTPOINT {{ storage_device }} | awk '$2 != "" {print $2}'
+  register: storage_mounted_partitions
+  when: storage_root_device_is_sdcard and (storage_device|default(''))|length > 0
 
 
-- name: meta test
-  ansible.builtin.meta: end_role
-  when: not storage_current_root_device_is_sdcard
-
-- name: going to format disk
-  ansible.builtin.debug:
-    msg: "going to format disk"
-
+- name: skip storage role if partitions are removed
+  ansible.builtin.meta: end_host
+  when: storage_mounted_partitions.stdout_lines | length > 0

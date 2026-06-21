@@ -1,3 +1,5 @@
+---
+# detects if sdcard is root partition device
 - name: check current source device for root partition
   ansible.builtin.command: findmnt -o source -n /
   register: storage_current_root_device
@@ -5,5 +7,6 @@
 
 - name: check if sdcard is used for root partition
   ansible.builtin.set_fact:
-    storage_current_root_device_is_sdcard: "{{ 'mmcblk' in storage_current_root_device.stdout }}"
+    storage_root_device_is_sdcard: "{{ 'mmcblk' in storage_current_root_device.stdout }}"
   changed_when: false
+
