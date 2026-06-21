@@ -6,7 +6,7 @@
   register: storage_mounted_partitions
   when: storage_root_device_is_sdcard and (storage_device|default(''))|length > 0
 
-- name: skip storage role if partitions are removed
+- name: skip storage role if there are mounted partitions for storage device
   ansible.builtin.meta: end_host
   when: storage_mounted_partitions.stdout_lines | length > 0
 
