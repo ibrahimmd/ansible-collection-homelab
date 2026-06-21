@@ -1,0 +1,6 @@
+---
+# partition storage device
+- name: partition storage device {{ storage_device }}
+  ansible.builtin.debug:
+   msg: "partition storage device {{ storage_device }}"
+  changed_when: false
