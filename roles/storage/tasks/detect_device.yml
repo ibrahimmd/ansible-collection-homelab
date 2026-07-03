@@ -1,22 +1,28 @@
 ---
 # detects the mass storage device to partition, format and sync
-- name: find storage device
-  ansible.builtin.shell:
-    cmd: lsblk -d -n -o NAME,TRAN | grep {{ storage_type }}
-  register: lsblk_output
-  changed_when: false
+# - name: find storage device
+#   ansible.builtin.shell:
+#     cmd: lsblk -d -n -o NAME,TRAN | grep {{ storage_type }}
+#   register: lsblk_output
+#   changed_when: false
 
-- name: set storage device fact
-  ansible.builtin.set_fact:
-    storage_device: "/dev/{{ (lsblk_output.stdout_lines | select('search', storage_type) | first).split()[0] }}"
+# - name: set storage device fact
+#   ansible.builtin.set_fact:
+#     storage_device: "/dev/{{ (lsblk_output.stdout_lines | select('search', storage_type) | first).split()[0] }}"
 
-- name: print detected storage device
-  ansible.builtin.debug:
-    msg: "detected storage device: {{ storage_device }}"
+# - name: print detected storage device
+#   ansible.builtin.debug:
+#     msg: "detected storage device: {{ storage_device }}"
+
+# - name: confirm storage device
+#   ansible.builtin.pause:
+#     prompt: "storage device is {{ storage_device }}. continue (y/n)"
+#   register: storage_device_confirmation
+#   when: storage_confirm_device_prompt | default(true) | bool
+
 
 - name: confirm storage device
   ansible.builtin.pause:
-    prompt: "storage device is {{ storage_device }}. continue (y/n)"
+    prompt: "storage device is {{ storage_disk.device }}. continue (y/n)"
   register: storage_device_confirmation
   when: storage_confirm_device_prompt | default(true) | bool
-

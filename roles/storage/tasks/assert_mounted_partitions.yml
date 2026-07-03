@@ -1,0 +1,21 @@
+---
+
+- name: check if there are any mounted partitions for storage device
+  ansible.builtin.shell:
+    cmd: lsblk -n -o NAME,MOUNTPOINT {{ storage_disk.device }} | awk '$2 != "" {print $2}'
+  register: storage_mounted_partitions
+  changed_when: false
+
+- name: debug mounted partitions for storage device
+  ansible.builtin.debug:
+    msg: "mounted partitions: {{ storage_mounted_partitions.stdout_lines }}"
+
+- name: fail if partitions are mounted
+  ansible.builtin.assert:
+    that:
+      - storage_mounted_partitions.stdout_lines | length == 0
+    fail_msg: "device {{ storage_disk.device }} has mounted partitions: {{ storage_mounted_partitions.stdout_lines | join(', ') }}. unmount manually and re-run."
+
+# - name: skip storage role if there are mounted partitions for storage device
+#   ansible.builtin.meta: end_host
+#   when: storage_mounted_partitions.stdout_lines | length > 0

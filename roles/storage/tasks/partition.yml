@@ -1,6 +1,26 @@
 ---
 # partition storage device
-- name: partition storage device {{ storage_device }}
-  ansible.builtin.debug:
-   msg: "partition storage device {{ storage_device }}"
-  changed_when: false
+- name: wipe partition table in {{ storage_disk.device }}
+  community.general.parted:
+    device: "{{ storage_disk.device }}"
+    label: "{{ storage_disk.label }}"
+    state: present
+
+- name: create partitions in {{ storage_disk.device }}
+  community.general.parted:
+    device: "{{ storage_disk.device }}"
+    number: "{{ item.number }}"
+    name: "{{ item.name }}"
+    part_start: "{{ item.start }}"
+    part_end: "{{ item.end }}"
+    fs_type: "{{ item.fs | default(omit) }}"
+    state: present
+  loop: "{{ storage_partitions }}"
+
+- name: set partition flags in {{ storage_disk.device }}
+  community.general.parted:
+    device: "{{ storage_disk.device }}"
+    number: "{{ item.0.number }}"
+    flags: "{{ item.0.flags }}"
+    state: present
+  loop: "{{ storage_partitions | selectattr('flags', 'defined') | list }}"
