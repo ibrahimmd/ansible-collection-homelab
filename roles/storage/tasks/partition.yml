@@ -1,23 +1,24 @@
 ---
 # partition storage device
-# - name: wipe partition table in {{ storage_disk.device }}
-#   community.general.parted:
-#     device: "{{ storage_disk.device }}"
-#     name: "{{ storage_disk.label }}"
-#     label: "{{ storage_disk.label }}"
-#     number: 1
-#     state: present
-
 - name: wipe partition table on {{ storage_disk.device }}
   ansible.builtin.command:
     cmd: wipefs -a {{ storage_disk.device }}
   changed_when: true
+
+- name: wipe partition table in {{ storage_disk.device }}
+  community.general.parted:
+    device: "{{ storage_disk.device }}"
+    name: "{{ storage_disk.label }}"
+    label: "{{ storage_disk.label }}"
+    number: 1
+    state: present
 
 - name: create partitions in {{ storage_disk.device }}
   community.general.parted:
     device: "{{ storage_disk.device }}"
     number: "{{ item.number }}"
     name: "{{ item.name }}"
+    label: "{{ storage_disk.label }}"
     part_start: "{{ item.start }}"
     part_end: "{{ item.end }}"
     fs_type: "{{ item.fs | default(omit) }}"
