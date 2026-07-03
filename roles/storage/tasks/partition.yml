@@ -10,7 +10,6 @@
     device: "{{ storage_disk.device }}"
     name: "{{ storage_disk.label }}"
     label: "{{ storage_disk.label }}"
-    number: 1
     state: present
 
 - name: create partitions in {{ storage_disk.device }}
