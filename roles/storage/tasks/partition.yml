@@ -3,8 +3,14 @@
 - name: wipe partition table in {{ storage_disk.device }}
   community.general.parted:
     device: "{{ storage_disk.device }}"
+    name: "{{ storage_disk.label }}"
     label: "{{ storage_disk.label }}"
     state: present
+
+# - name: wipe partition table on {{ storage_disk.device }}
+#   ansible.builtin.command:
+#     cmd: wipefs -a {{ storage_disk.device }} mklabel {{ storage_disk.label }}
+#   changed_when: true
 
 - name: create partitions in {{ storage_disk.device }}
   community.general.parted:
