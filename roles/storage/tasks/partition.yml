@@ -5,6 +5,7 @@
     device: "{{ storage_disk.device }}"
     name: "{{ storage_disk.label }}"
     label: "{{ storage_disk.label }}"
+    number: 1
     state: present
 
 # - name: wipe partition table on {{ storage_disk.device }}
