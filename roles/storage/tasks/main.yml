@@ -17,6 +17,9 @@
 #   import_tasks: detect_device.yml
 #   when: storage_root_device_is_sdcard
 
+- name: install required packages
+  import_tasks: install_packages.yml
+
 - name: assert if there are mounted partitions on storage device
   import_tasks: assert_mounted_partitions.yml
   when: storage_root_device_is_sdcard
