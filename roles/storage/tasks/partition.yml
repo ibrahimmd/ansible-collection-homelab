@@ -21,7 +21,7 @@
     label: "{{ storage_disk.label }}"
     part_start: "{{ item.start }}"
     part_end: "{{ item.end }}"
-    fs_type: "{{ item.fs | default(omit) }}"
+    fs_type: "{{ 'linux-swap' if item.fs | default('') == 'swap' else omit }}"
     flags: "{{ item.flags | default(omit) }}"
     state: present
   loop: "{{ storage_partitions }}"
