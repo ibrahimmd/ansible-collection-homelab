@@ -28,3 +28,7 @@
 - name: format partitions in storage device
   import_tasks: mkfs.yml
   when: storage_root_device_is_sdcard
+
+- name: setup lvm in storage device
+  import_tasks: lvm.yml
+  when: storage_root_device_is_sdcard
