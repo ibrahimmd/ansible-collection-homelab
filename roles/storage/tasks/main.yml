@@ -25,3 +25,6 @@
   import_tasks: partition.yml
   when: storage_root_device_is_sdcard
 
+- name: format partitions in storage device
+  import_tasks: mkfs.yml
+  when: storage_root_device_is_sdcard
