@@ -17,17 +17,19 @@
     device: "{{ storage_disk.device }}"
     number: "{{ item.number }}"
     name: "{{ item.name }}"
+    unit: "{{ storage_disk.unit }}"
     label: "{{ storage_disk.label }}"
     part_start: "{{ item.start }}"
     part_end: "{{ item.end }}"
     fs_type: "{{ item.fs | default(omit) }}"
+    flags: "{{ item.flags | default(omit) }}"
     state: present
   loop: "{{ storage_partitions }}"
 
-- name: set partition flags in {{ storage_disk.device }}
-  community.general.parted:
-    device: "{{ storage_disk.device }}"
-    number: "{{ item.0.number }}"
-    flags: "{{ item.0.flags }}"
-    state: present
-  loop: "{{ storage_partitions | selectattr('flags', 'defined') | list }}"
+# - name: set partition flags in {{ storage_disk.device }}
+#   community.general.parted:
+#     device: "{{ storage_disk.device }}"
+#     number: "{{ item.0.number }}"
+#     flags: "{{ item.0.flags }}"
+#     state: present
+#   loop: "{{ storage_partitions | selectattr('flags', 'defined') | list }}"
