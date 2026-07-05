@@ -5,5 +5,5 @@
     fstype: "{{ item.fs }}"
     dev: "{{ storage_disk.device }}{{ item.number }}"
     opts: "{{ '-n' if item.fs == 'vfat' else '-L' }} {{ item.name }}"
-    force: false
+    force: true
   loop: "{{ storage_partitions | selectattr('fs', 'defined') | selectattr('fs', 'ne', 'lvm') | list }}"
