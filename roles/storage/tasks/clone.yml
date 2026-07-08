@@ -20,6 +20,6 @@
 - name: mount storage device boot partition
   ansible.posix.mount:
     path: "{{ storage_clone_mount }}/root/boot/firmware"
-    src: "{{ storage_disk.device }}{{ (storage_partitions | selectattr('role', 'equalto', 'boot') | first).number }}"
-    fstype: "{{ (storage_partitions | selectattr('role', 'equalto', 'boot') | first).fs }}"
+    src: "{{ storage_disk.device }}{{ (storage_partitions | selectattr('role', 'defined') | selectattr('role', 'equalto', 'boot') | first).number }}"
+    fstype: "{{ (storage_partitions | selectattr('role', 'defined') | selectattr('role', 'equalto', 'boot') | first).fs }}"
     state: mounted
