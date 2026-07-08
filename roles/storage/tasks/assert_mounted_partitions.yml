@@ -1,5 +1,5 @@
 ---
-
+# bail out if storage device has mounted partitions
 - name: check if there are any mounted partitions for storage device
   ansible.builtin.shell:
     cmd: lsblk -n -o NAME,MOUNTPOINT {{ storage_disk.device }} | awk '$2 != "" {print $2}'

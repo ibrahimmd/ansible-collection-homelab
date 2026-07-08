@@ -1,0 +1,25 @@
+---
+# clone sdcard to storage device
+- name: create storage mount points
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ storage_clone_mount}}/root"
+    - "{{ storage_clone_mount}}/root/boot/firmware"
+
+
+- name: mount storage device root partition
+  ansible.posix.mount:
+    path: "{{ storage_clone_mount }}/root"
+    src: "{{ storage_disk.device }}{{ (storage_partitions | selectattr('role', 'equalto', 'root') | first).number }}"
+    fstype: "{{ (storage_partitions | selectattr('role', 'equalto', 'root') | first).fs }}"
+    state: mounted
+
+- name: mount storage device boot partition
+  ansible.posix.mount:
+    path: "{{ storage_clone_mount }}/root/boot/firmware"
+    src: "{{ storage_disk.device }}{{ (storage_partitions | selectattr('role', 'equalto', 'boot') | first).number }}"
+    fstype: "{{ (storage_partitions | selectattr('role', 'equalto', 'boot') | first).fs }}"
+    state: mounted

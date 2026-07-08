@@ -35,3 +35,7 @@
 - name: setup lvm in storage device
   import_tasks: lvm.yml
   when: storage_root_device_is_sdcard
+
+- name: clone sdcard to storage device
+  import_tasks: clone.yml
+  when: storage_root_device_is_sdcard
