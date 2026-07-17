@@ -6,20 +6,57 @@
     state: directory
     mode: '0755'
   loop:
-    - "{{ storage_clone_mount}}/root"
-    - "{{ storage_clone_mount}}/root/boot/firmware"
+    - "{{ storage_clone_mount}}"
+    - "{{ storage_clone_mount}}/boot/firmware"
+  tags: storage_clone
 
 
 - name: mount storage device root partition
   ansible.posix.mount:
-    path: "{{ storage_clone_mount }}/root"
+    path: "{{ storage_clone_mount }}"
     src: "{{ storage_disk.device }}{{ (storage_partitions | selectattr('role', 'defined') | selectattr('role', 'equalto', 'root') | first).number }}"
     fstype: "{{ (storage_partitions | selectattr('role', 'defined') | selectattr('role', 'equalto', 'root') | first).fs }}"
     state: mounted
+  tags: storage_clone
 
 - name: mount storage device boot partition
   ansible.posix.mount:
-    path: "{{ storage_clone_mount }}/root/boot/firmware"
+    path: "{{ storage_clone_mount }}/boot/firmware"
     src: "{{ storage_disk.device }}{{ (storage_partitions | selectattr('role', 'defined') | selectattr('role', 'equalto', 'boot') | first).number }}"
     fstype: "{{ (storage_partitions | selectattr('role', 'defined') | selectattr('role', 'equalto', 'boot') | first).fs }}"
     state: mounted
+  tags: storage_clone
+
+- name: clone / to {{ storage_clone_mount }}
+  ansible.posix.synchronize:
+    src: /
+    dest: "{{ storage_clone_mount }}/"
+    archive: true
+    delete: true
+    times: true
+    rsync_opts: "{{ storage_rsync_opts + [
+      '--exclude=.gvfs',
+      '--exclude=/dev/*',
+      '--exclude=/home/*'
+      '--exclude=/mnt/clone/*',
+      '--exclude=/proc/*',
+      '--exclude=/run/*',
+      '--exclude=/sys/*',
+      '--exclude=/tmp/*',
+      '--exclude=lost+found/*',
+      ] }}"
+  delegate_to: "{{ inventory_hostname }}"
+  changed_when: true
+
+- name: clone /boot/firmware to storage device
+  ansible.posix.synchronize:
+    src: /boot/firmware/
+    dest: "{{ storage_clone_mount }}/boot/firmware/"
+    archive: true
+    delete: true
+    times: true
+    rsync_opts: "{{ storage_rsync_opts + [
+      '--exclude=lost+found/*'
+      ] }}"
+  delegate_to: "{{ inventory_hostname }}"
+  changed_when: true

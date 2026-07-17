@@ -4,8 +4,8 @@
   ansible.builtin.setup:
     filter: ansible_local
 
-- name: detect current root boot device
-  import_tasks: detect_root.yml
+- name: check current boot device
+  import_tasks: check_boot_device.yml
 
 # - name: end role if current root device is sdcard
 #   ansible.builtin.meta: end_role
@@ -20,22 +20,18 @@
 - name: install required packages
   import_tasks: install_packages.yml
 
-- name: assert if there are mounted partitions on storage device
-  import_tasks: assert_mounted_partitions.yml
-  when: storage_root_device_is_sdcard
-
 - name: partition storage device
   import_tasks: partition.yml
-  when: storage_root_device_is_sdcard
+  when: storage_boot_device_is_sdcard
 
 - name: format partitions in storage device
   import_tasks: mkfs.yml
-  when: storage_root_device_is_sdcard
+  when: storage_boot_device_is_sdcard
 
 - name: setup lvm in storage device
   import_tasks: lvm.yml
-  when: storage_root_device_is_sdcard
+  when: storage_boot_device_is_sdcard
 
 - name: clone sdcard to storage device
   import_tasks: clone.yml
-  when: storage_root_device_is_sdcard
+  when: storage_boot_device_is_sdcard

@@ -7,3 +7,4 @@
     opts: "{{ '-n' if item.fs == 'vfat' else '-L' }} {{ item.name }}"
     force: true
   loop: "{{ storage_partitions | selectattr('fs', 'defined') | selectattr('fs', 'ne', 'lvm') | list }}"
+  tags: storage_mkfs

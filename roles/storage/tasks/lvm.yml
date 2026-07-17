@@ -5,6 +5,7 @@
     vg: "{{ storage_lvm.vg.name }}"
     pvs: "{{ storage_lvm.vg.pvs | join(',') }}"
     state: present
+  tags: storage_lvm
 
 - name: create lvm logical volumes
   community.general.lvol:
@@ -13,6 +14,7 @@
     size: "{{ item.size }}"
     state: present
   loop: "{{ storage_lvm.lvs }}"
+  tags: storage_lvm
 
 - name: format lvm logical volumes
   community.general.filesystem:
@@ -21,3 +23,4 @@
     opts: "-L {{ item.name }}"
     force: true
   loop: "{{ storage_lvm.lvs }}"
+  tags: storage_lvm

@@ -4,3 +4,4 @@
   ansible.builtin.package:
     name: lvm2
     state: present
+  tags: storage_install_package

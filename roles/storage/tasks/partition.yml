@@ -1,23 +1,40 @@
 ---
 # partition storage device
-- name: wipe partition table on {{ storage_disk.device }}
-  ansible.builtin.command:
-    cmd: wipefs -a {{ storage_disk.device }}
-  changed_when: true
 
-# - name: wipe partition table in {{ storage_disk.device }}
-#   community.general.parted:
-#     device: "{{ storage_disk.device }}"
-#     name: "{{ storage_disk.label }}"
-#     label: "{{ storage_disk.label }}"
-#     state: present
+- name: read storage device partition information directly
+  community.general.parted:
+    device: "{{ storage_disk.device }}"
+    unit: MiB
+    state: info
+  register: storage_device_info
+  tags: storage_partition
+
+- name: display partition details on error condition
+  ansible.builtin.debug:
+    var: storage_device_info.partitions
+  when: storage_device_info.partitions | length > 0
+  tags: storage_partition
+
+- name: fail if storage device already contains partitions
+  ansible.builtin.fail:
+    msg: "error: safety check: {{ storage_disk.device }} already has existing partitions."
+  when: storage_device_info.partitions | length > 0
+  tags: storage_partition
+
+# - name: wipe partition table on {{ storage_disk.device }}
+#   ansible.builtin.command:
+#     cmd: wipefs -a {{ storage_disk.device }}
+#   changed_when: true
+#   tags: storage_partition
+
+# TODO: add feature to force wipe storage disk
 
 - name: create partitions in {{ storage_disk.device }}
   community.general.parted:
     device: "{{ storage_disk.device }}"
     number: "{{ item.number }}"
     name: "{{ item.name }}"
-    unit: "{{ storage_disk.unit }}"
+    unit: "{{ storage_disk.partition_unit }}"
     label: "{{ storage_disk.label }}"
     part_start: "{{ item.start }}"
     part_end: "{{ item.end }}"
@@ -25,11 +42,4 @@
     flags: "{{ item.flags | default(omit) }}"
     state: present
   loop: "{{ storage_partitions }}"
-
-# - name: set partition flags in {{ storage_disk.device }}
-#   community.general.parted:
-#     device: "{{ storage_disk.device }}"
-#     number: "{{ item.0.number }}"
-#     flags: "{{ item.0.flags }}"
-#     state: present
-#   loop: "{{ storage_partitions | selectattr('flags', 'defined') | list }}"
+  tags: storage_partition

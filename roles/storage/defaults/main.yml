@@ -2,3 +2,8 @@
 ---
 # defaults file for storage
 storage_clone_mount: /mnt/clone
+
+storage_rsync_opts:
+- "--force"
+- "--quiet"
+- "-AWHXx"
