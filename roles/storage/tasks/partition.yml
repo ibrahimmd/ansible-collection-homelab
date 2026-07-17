@@ -7,19 +7,16 @@
     unit: MiB
     state: info
   register: storage_device_info
-  tags: storage_partition
 
 - name: display partition details on error condition
   ansible.builtin.debug:
     var: storage_device_info.partitions
   when: storage_device_info.partitions | length > 0
-  tags: storage_partition
 
 - name: fail if storage device already contains partitions
   ansible.builtin.fail:
     msg: "error: safety check: {{ storage_disk.device }} already has existing partitions."
   when: storage_device_info.partitions | length > 0
-  tags: storage_partition
 
 # - name: wipe partition table on {{ storage_disk.device }}
 #   ansible.builtin.command:
@@ -42,4 +39,3 @@
     flags: "{{ item.flags | default(omit) }}"
     state: present
   loop: "{{ storage_partitions }}"
-  tags: storage_partition

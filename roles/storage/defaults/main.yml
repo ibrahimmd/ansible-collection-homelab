@@ -7,3 +7,5 @@ storage_rsync_opts:
 - "--force"
 - "--quiet"
 - "-AWHXx"
+
+storage_facts_path: "/etc/ansible/facts.d"
