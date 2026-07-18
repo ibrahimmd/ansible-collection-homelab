@@ -1,0 +1,4 @@
+#SPDX-License-Identifier: MIT-0
+---
+# defaults file for plex
+plex_signing_key_url: https://downloads.plex.tv/plex-keys/PlexSign.v2.key

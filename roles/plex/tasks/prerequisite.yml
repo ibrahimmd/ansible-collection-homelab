@@ -1,0 +1,4 @@
+---
+# install prerequisites
+- name: install on {{ ansible_facts['os_family'] | lower}}
+  ansible.builtin.include_tasks: "prerequisite_{{ ansible_facts['os_family'] | lower }}.yml"
