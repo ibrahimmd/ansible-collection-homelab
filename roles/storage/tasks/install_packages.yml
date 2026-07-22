@@ -1,7 +1,0 @@
----
-# install required packages
-- name: install lvm2
-  ansible.builtin.package:
-    name: lvm2
-    state: present
-  tags: storage_install_package

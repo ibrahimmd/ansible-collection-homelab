@@ -34,6 +34,10 @@
     update_cache: true
     state: latest
 
+- name: wait for plex to be ready
+  ansible.builtin.pause:
+    seconds: 10
+
 - name: claim plex server
   when: plex_prompt_claim_token | default(true) == true
   block:
@@ -42,6 +46,7 @@
       prompt: "enter plex claim token (valid for 4 minutes) from https://account.plex.tv/claim"
     register: plex_claim_token
 
+  # NOTE: plex service does not use /etc/default/plexmediaserver
   # - name: ensure /etc/default/plexmediaserver exists
   #   ansible.builtin.file:
   #     path: /etc/default/plexmediaserver
@@ -68,3 +73,7 @@
       url: "http://127.0.0.1:32400/myplex/claim?token={{ plex_claim_token.user_input }}"
       method: POST
       status_code: 200
+    register: plex_claim_result
+    retries: 5
+    delay: 10
+    until: plex_claim_result.status == 200

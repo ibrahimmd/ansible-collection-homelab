@@ -1,5 +1,5 @@
 ---
 plex_supported: true
 
-plex_repo_file: "/etc/apt/sources.list.d/plex.list"
+plex_repo_file: "/etc/apt/sources.list.d/plex"
 plex_signing_key_path: /usr/share/keyrings/plexmediaserver.v2.gpg

@@ -1,5 +1,5 @@
 ---
-# install/configure prerequisites
+# install prerequisite packages
 - name: install prerequisite packages
   ansible.builtin.package:
     name:

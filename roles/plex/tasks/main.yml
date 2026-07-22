@@ -16,8 +16,8 @@
     # if neither distro nor family is supported, try a default configuration.
     - "{{ role_path }}/vars/default.yml"
 
-- name: install prerequisite
-  ansible.builtin.import_tasks: prerequisite.yml
+- name: preinstall tasks
+  ansible.builtin.import_tasks: preinstall.yml
   when: plex_supported | default(false) == true
 
 - name: install plex server
