@@ -1,5 +1,8 @@
 ---
 # tasks file for plex
+- name: gather local facts
+  ansible.builtin.setup:
+    filter: ansible_local
 
 - name: import plex variables specific to distribution
   ansible.builtin.include_vars: "{{ item }}"
@@ -16,10 +19,16 @@
     # if neither distro nor family is supported, try a default configuration.
     - "{{ role_path }}/vars/default.yml"
 
-- name: preinstall tasks
-  ansible.builtin.import_tasks: preinstall.yml
-  when: plex_supported | default(false) == true
+- name: install plex
+  when:
+    - plex_supported | default(false) == true
+    - ansible_local.plex.plex.installed | default('false') | bool != true
+  block:
+    - name: preinstall tasks
+      ansible.builtin.import_tasks: preinstall.yml
 
-- name: install plex server
-  ansible.builtin.import_tasks: install.yml
-  when: plex_supported | default(false) == true
+    - name: install plex server
+      ansible.builtin.import_tasks: install.yml
+
+    - name: set acl for plex media directory
+      ansible.builtin.import_tasks: acl.yml

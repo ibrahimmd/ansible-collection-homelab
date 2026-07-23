@@ -2,3 +2,21 @@
 ---
 # defaults file for plex
 plex_signing_key_url: https://downloads.plex.tv/plex-keys/PlexSign.v2.key
+
+plex_prompt_claim_token: true
+
+plex_media_dir: /data/media
+plex_media_dir_ownership_set: true
+plex_media_dir_owner: plex
+plex_media_dir_group: plex
+plex_media_dir_acl_set: true
+plex_media_dir_acl:
+  - { etype: user,  entity: plex, permissions: rwx }
+  - { etype: group, entity: plex, permissions: rwx }
+  - { etype: user,  entity: plex, permissions: rwx, default: true }
+  - { etype: group, entity: plex, permissions: rwx, default: true }
+  - { etype: group, entity: "",   permissions: r-x, default: true }
+  - { etype: other, entity: "",   permissions: r-x, default: true }
+  - { etype: mask,  entity: "",   permissions: rwx, default: true }
+
+plex_force_install: false
