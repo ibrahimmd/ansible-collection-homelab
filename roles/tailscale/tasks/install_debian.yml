@@ -1,0 +1,45 @@
+---
+# preinstall tasks for debian
+- name: skip if debian version is not supported
+  ansible.builtin.meta: end_host
+  when: ansible_facts['distribution_major_version'] not in ['12', '13']
+
+# debian-12 specific tasks
+- name: install tasks for debian-12
+  when: ansible_facts['distribution_major_version'] == '12'
+  block:
+  - name: download tailscale signing key
+    ansible.builtin.get_url:
+      url: "{{ tailscale_signing_key_url }}"
+      dest: "{{ tailscale_signing_key_path }}"
+      mode: '0644'
+      force: true
+  - name: add tailscale repository
+    ansible.builtin.apt_repository:
+      repo: "deb [signed-by={{ tailscale_signing_key_path }}] https://pkgs.tailscale.com/stable/debian bookworm main"
+      state: present
+      filename: "{{ tailscale_repo_file }}"
+
+# debian-13 specific tasks
+- name: install tasks for debian-13
+  when: ansible_facts['distribution_major_version'] == '13'
+  block:
+  - name: download tailscale signing key
+    ansible.builtin.get_url:
+      url: "{{ tailscale_signing_key_url }}"
+      dest: "{{ tailscale_signing_key_path }}"
+      mode: '0644'
+      force: true
+
+  - name: add tailscale repository
+    ansible.builtin.apt_repository:
+      repo: "deb [signed-by={{ tailscale_signing_key_path }}] https://pkgs.tailscale.com/stable/debian trixie main"
+      state: present
+      filename: "{{ tailscale_repo_file }}"
+
+
+- name: install tailscale
+  ansible.builtin.package:
+    name: "{{ tailscale_package + tailscale_extra_packages }}"
+    state: present
+  no_log: true

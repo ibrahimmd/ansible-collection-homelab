@@ -1,3 +1,29 @@
-#SPDX-License-Identifier: MIT-0
 ---
 # tasks file for tailscale
+- name: gather local facts
+  ansible.builtin.setup:
+    filter: ansible_local
+
+- name: import tailscale variables specific to os distribution/family
+  ansible.builtin.include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ role_path }}/vars/{{ ansible_facts['distribution'] | lower }}-{{ ansible_facts['distribution_major_version'] }}.yml"
+    - "{{ role_path }}/vars/{{ ansible_facts['distribution'] | lower }}.yml"
+    # we will not use os_family as fallback as there are too many variations to handle
+    # if no match is found, try a default configuration.
+    - "{{ role_path }}/vars/default.yml"
+
+- name: install tailscale
+  when:
+    - tailscale_supported | default(false) == true
+    - ansible_local.software.tailscale.installed | default('false') | bool != true
+  block:
+    - name: preinstall tasks
+      ansible.builtin.import_tasks: preinstall.yml
+
+    - name: install tailscale
+      ansible.builtin.import_tasks: install.yml
+
+    - name: postinstall tasks
+      ansible.builtin.import_tasks: postinstall.yml
+

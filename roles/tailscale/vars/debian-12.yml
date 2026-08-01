@@ -1,0 +1,13 @@
+---
+# debian 12 (bookworm)
+tailscale_supported: true
+
+tailscale_signing_key_url: "https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg"
+tailscale_signing_key_path: "/usr/share/keyrings/tailscale.gpg"
+
+tailscale_repo_file: "/etc/apt/sources.list.d/tailscale"
+
+tailscale_package:
+- tailscale
+
+tailscale_extra_packages: []

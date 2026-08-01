@@ -1,0 +1,84 @@
+---
+# postinstall tasks for debian
+- name: skip if debian version is not supported
+  ansible.builtin.meta: end_host
+  when: ansible_facts['distribution_major_version'] not in ['12', '13']
+
+# debian-12 specific tasks
+# - name: postinstall tasks for debian-12
+#   when: ansible_facts['distribution_major_version'] == '12'
+#   block:
+
+# debian-13 specific tasks
+# - name: postinstall tasks for debian-13
+#   when: ansible_facts['distribution_major_version'] == '13'
+#   block:
+
+- name: set sysctls for tailscale
+  ansible.posix.sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    sysctl_file: "{{ tailscale_sysctl_file }}"
+    state: present
+    reload: true
+  loop: "{{ tailscale_sysctl }}"
+
+# - name: disable upnp for tailscale
+#   ansible.builtin.lineinfile:
+#     path: "{{ tailscale_env_file }}"
+#     regexp: '^TS_DISABLE_UPNP='
+#     line: 'TS_DISABLE_UPNP=true'
+#   notify: restart tailscaled
+#   when: tailscale_disable_upnp | default(true) | bool
+
+- name: disable upnp and portmapper for tailscale
+  ansible.builtin.lineinfile:
+    path: "{{ tailscale_env_file }}"
+    regexp: '^{{ item.key }}='
+    line: '{{ item.key }}={{ item.value }}'
+    create: true
+  loop:
+    - { key: 'TS_DISABLE_UPNP', value: 'true' }
+    - { key: 'TS_DISABLE_PORTMAPPER', value: 'true' }
+  loop_control:
+    label: "{{ item.key }}"
+  when: tailscale_disable_upnp | default(true) | bool
+  notify: restart tailscaled
+
+- name: set tailscale config file using flags
+  ansible.builtin.lineinfile:
+    path: "{{ tailscale_env_file }}"
+    regexp: '^FLAGS='
+    line: 'FLAGS="--config={{ tailscale_config_file }}"'
+  notify: restart tailscaled
+
+- name: create tailscale configuration directory
+  ansible.builtin.file:
+    path: "{{ tailscale_config_file | dirname }}"
+    state: directory
+    mode: '0755'
+
+- name: prompt for tailscale auth key
+  ansible.builtin.pause:
+    prompt: "enter tailscale one-time auth key from https://console.tailscale.com/admin/settings/keys"
+  register: tailscale_auth_key
+
+
+- name: copy tailscale "{{ tailscale_config_file }}"
+  ansible.builtin.template:
+    src: tailscale_config.json.j2
+    dest: "{{ tailscale_config_file }}"
+    mode: '0644'
+  notify: restart tailscaled
+
+- name: write plex installed fact
+  community.general.ini_file:
+    path: /etc/ansible/facts.d/software.fact
+    section: tailscale
+    option: installed
+    value: "true"
+    mode: '0644'
+
+- name: refresh local facts
+  ansible.builtin.setup:
+    filter: ansible_local
