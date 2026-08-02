@@ -1,0 +1,44 @@
+# byte-compiled / python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# logs
+*.log
+*.retry
+
+# virtual environments
+venv/
+.env/
+.env.*
+
+# pyenv
+.python-version
+
+# ansible facts and temporary files
+*.retry
+*.retry.*
+.ansible/
+*.vault
+*.sops
+
+# ignore Docker artifacts
+*.pid
+*.sock
+*.pid.lock
+*.swp
+*.bak
+*.tmp
+
+# docker and compose files (optional)
+docker-compose.override.yml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# ide / editor configs (optional)
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace

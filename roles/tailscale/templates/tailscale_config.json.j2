@@ -1,0 +1,8 @@
+{
+  "version": "alpha0",
+  "locked": false,
+  "enabled": true,
+  "authKey": "{{ tailscale_auth_key.user_input }}",
+  "acceptRoutes": {{ tailscale_accept_routes | to_json }},
+  "advertiseRoutes": {{ (tailscale_advertise_routes + (['0.0.0.0/0', '::/0'] if tailscale_advertise_exit_node else [])) | to_json }}
+}

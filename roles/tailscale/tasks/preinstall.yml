@@ -1,0 +1,4 @@
+---
+# preinstall tasks per os distribution
+- name: preinstall tasks for {{ ansible_facts['distribution'] | lower}}
+  ansible.builtin.include_tasks: "preinstall_{{ ansible_facts['distribution'] | lower }}.yml"

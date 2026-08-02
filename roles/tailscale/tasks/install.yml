@@ -1,0 +1,4 @@
+---
+# install tasks per os distribution
+- name: install tasks for {{ ansible_facts['distribution'] | lower}}
+  ansible.builtin.include_tasks: "install_{{ ansible_facts['distribution'] | lower }}.yml"
