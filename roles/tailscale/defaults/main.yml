@@ -12,8 +12,8 @@ tailscale_router_port: 41641
 
 tailscale_sysctl_file: "/etc/sysctl.d/99-tailscale.conf"
 tailscale_sysctl:
-  - { name: net.ipv4.ip_forward, value: '1' }
-  - { name: net.ipv6.conf.all.forwarding, value: '1' }
+- { name: net.ipv4.ip_forward, value: '1' }
+- { name: net.ipv6.conf.all.forwarding, value: '1' }
 
 tailscale_env_file: "/etc/default/tailscaled"
 tailscale_config_file: "/etc/tailscale/config.json"
@@ -21,7 +21,7 @@ tailscale_config_file: "/etc/tailscale/config.json"
 tailscale_accept_routes: false
 tailscale_advertise_exit_node: true
 tailscale_advertise_routes:
-  - "192.168.10.0/24"
+- "192.168.10.0/24"
 
 
 tailscale_force_install: false
