@@ -1,0 +1,3 @@
+---
+# defaults file for flightaware
+flightaware_repo_deb_url: "https://www.flightaware.com/adsb/piaware/files/packages/pool/piaware/f/flightaware-apt-repository/flightaware-apt-repository_1.3_all.deb"
