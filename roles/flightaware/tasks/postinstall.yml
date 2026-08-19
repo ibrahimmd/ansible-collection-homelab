@@ -1,0 +1,4 @@
+---
+# postinstall tasks per os distribution
+- name: postinstall tasks for {{ ansible_facts['distribution'] | lower}}
+  ansible.builtin.include_tasks: "postinstall_{{ ansible_facts['distribution'] | lower }}.yml"

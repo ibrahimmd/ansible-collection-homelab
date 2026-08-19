@@ -1,3 +1,13 @@
 ---
 # defaults file for flightaware
 flightaware_repo_deb_url: "https://www.flightaware.com/adsb/piaware/files/packages/pool/piaware/f/flightaware-apt-repository/flightaware-apt-repository_1.3_all.deb"
+
+flightaware_feeder_id: ""
+
+flightaware_config:
+  feeder_id: "{{ flightaware_feeder_id }}"
+  allow_mlat: "yes"
+  mlat_results: "yes"
+  receiver_type: beast
+  allow_auto_updates: "yes"
+  allow_manual_updates: "yes"
