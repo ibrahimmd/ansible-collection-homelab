@@ -9,13 +9,14 @@
     suffix: deb
   register: flightaware_repo_tempfile
 
-- name: download flightAware apt repository package
+- name: download flightaware apt repository package
   ansible.builtin.get_url:
     url: "{{ flightaware_repo_deb_url }}"
     dest: "{{ flightaware_repo_tempfile.path }}"
+    force: true
     mode: '0644'
 
-- name: install flightAware apt repository
+- name: install flightaware apt repository
   ansible.builtin.apt:
     deb: "{{ flightaware_repo_tempfile.path }}"
     state: present

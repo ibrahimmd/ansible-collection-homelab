@@ -11,3 +11,5 @@ flightaware_config:
   receiver_type: beast
   allow_auto_updates: "yes"
   allow_manual_updates: "yes"
+
+flightaware_enabled: true

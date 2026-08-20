@@ -3,3 +3,31 @@
 - name: skip if debian version is not supported
   ansible.builtin.meta: end_host
   when: ansible_facts['distribution_major_version'] not in ['12', '13']
+
+- name: configure piaware
+  ansible.builtin.template:
+    src: piaware.conf.j2
+    dest: /etc/piaware.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart piaware
+
+- name: configure services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: "{{ flightaware_enabled }}"
+    state: "{{ 'started' if flightaware_enabled else 'stopped' }}"
+  loop: "{{ flightaware_services }}"
+
+- name: write flightaware installed fact
+  community.general.ini_file:
+    path: /etc/ansible/facts.d/software.fact
+    section: flightaware
+    option: installed
+    value: "true"
+    mode: '0644'
+
+- name: refresh local facts
+  ansible.builtin.setup:
+    filter: ansible_local
