@@ -1,0 +1,31 @@
+# preinstall tasks for debian
+# - name: skip if debian version is not supported
+#   ansible.builtin.meta: end_host
+#   when: ansible_facts['distribution_major_version'] not in ['12', '13']
+
+- name: create temp file for flightAware apt repository package
+  ansible.builtin.tempfile:
+    state: file
+    suffix: deb
+  register: flightaware_repo_tempfile
+
+- name: download flightaware apt repository package
+  ansible.builtin.get_url:
+    url: "{{ flightaware_repo_deb_url }}"
+    dest: "{{ flightaware_repo_tempfile.path }}"
+    force: true
+    mode: '0644'
+
+- name: install flightaware apt repository
+  ansible.builtin.apt:
+    deb: "{{ flightaware_repo_tempfile.path }}"
+    state: present
+
+- name: remove temp deb file
+  ansible.builtin.file:
+    path: "{{ flightaware_repo_tempfile.path }}"
+    state: absent
+
+- name: update apt cache
+  ansible.builtin.apt:
+    update_cache: true

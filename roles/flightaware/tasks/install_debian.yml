@@ -1,0 +1,10 @@
+---
+# - name: skip if debian version is not supported
+#   ansible.builtin.meta: end_host
+#   when: ansible_facts['distribution_major_version'] not in ['12', '13']
+
+- name: install flightaware packages
+  ansible.builtin.apt:
+    name: "{{ flightaware_packages }}"
+    state: present
+    update_cache: true

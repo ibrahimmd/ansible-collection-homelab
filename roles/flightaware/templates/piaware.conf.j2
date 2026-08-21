@@ -1,0 +1,13 @@
+# This file is managed by Ansible. Do not edit manually.
+# This file configures piaware and related software.
+# You can edit it directly or use piaware-config from the command line
+# to view and change settings.
+#
+# If /boot/piaware-config.txt also exists, then settings present in
+# that file will override settings in this file.
+feeder-id  {{ flightaware_config.feeder_id }}
+allow-mlat {{ flightaware_config.allow_mlat }}
+mlat-results {{ flightaware_config.mlat_results }}
+receiver-type {{ flightaware_config.receiver_type }}
+allow-auto-updates {{ flightaware_config.allow_auto_updates }}
+allow-manual-updates {{ flightaware_config.allow_manual_updates }}

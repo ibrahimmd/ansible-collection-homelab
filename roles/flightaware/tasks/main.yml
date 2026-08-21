@@ -1,0 +1,21 @@
+---
+# tasks file for flightaware
+- name: skip host if flightaware is already installed
+  ansible.builtin.meta: end_host
+  when:
+    - (ansible_local.software.flightaware.installed | default('false') | bool) == true
+    - (flightaware_force_install | default(false) | bool) == false
+
+- name: import flightaware variables specific to os distribution/family
+  ansible.builtin.include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ role_path }}/vars/{{ ansible_facts['distribution'] | lower }}-{{ ansible_facts['distribution_major_version'] }}.yml"
+    - "{{ role_path }}/vars/{{ ansible_facts['distribution'] | lower }}.yml"
+    # we will not use os_family as fallback as there are too many variations to handle
+    # if no match is found, try a default configuration.
+    - "{{ role_path }}/vars/default.yml"
+
+- name: install flightaware
+  ansible.builtin.include_tasks: run.yml
+  when:
+    - (flightaware_supported | default(false) | bool) == true

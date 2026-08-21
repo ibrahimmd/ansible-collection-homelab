@@ -1,0 +1,7 @@
+---
+# handlers file for flightaware
+- name: restart piaware
+  ansible.builtin.systemd:
+    name: piaware
+    state: restarted
+  when: flightaware_enabled | bool

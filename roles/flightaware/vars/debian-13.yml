@@ -1,0 +1,11 @@
+---
+# debian 13 (trixie)
+flightaware_supported: true
+
+flightaware_packages:
+  - piaware
+  - dump1090-fa
+
+flightaware_services:
+  - piaware
+  - dump1090-fa

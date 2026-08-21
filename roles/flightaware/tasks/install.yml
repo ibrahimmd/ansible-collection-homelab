@@ -1,0 +1,4 @@
+---
+# install flightaware
+- name: install on {{ ansible_facts['os_family']| lower}}
+  ansible.builtin.include_tasks: "install_{{ ansible_facts['os_family'] | lower }}.yml"

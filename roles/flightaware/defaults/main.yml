@@ -1,0 +1,22 @@
+---
+# defaults file for flightaware
+flightaware_repo_deb_url: "https://www.flightaware.com/adsb/piaware/files/packages/pool/piaware/f/flightaware-apt-repository/flightaware-apt-repository_1.3_all.deb"
+
+flightaware_feeder_id: ""
+
+flightaware_config_file_path:
+  piaware: "/etc/piaware.conf"
+  dump1090: "/etc/default/dump1090-fa"
+  ansible_fact: "/etc/ansible/facts.d/software.fact"
+
+flightaware_config:
+  feeder_id: "{{ flightaware_feeder_id }}"
+  allow_mlat: "yes"
+  mlat_results: "yes"
+  receiver_type: "beast"
+  allow_auto_updates: "yes"
+  allow_manual_updates: "yes"
+
+flightaware_enabled: true
+
+flightaware_force_install: false

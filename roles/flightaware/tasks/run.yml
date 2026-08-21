@@ -1,0 +1,10 @@
+---
+# install flightaware
+- name: preinstall tasks
+  ansible.builtin.include_tasks: preinstall.yml
+
+- name: install flightaware
+  ansible.builtin.include_tasks: install.yml
+
+- name: postinstall tasks
+  ansible.builtin.include_tasks: postinstall.yml
