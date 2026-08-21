@@ -1,9 +1,4 @@
 ---
-# postinstall tasks for debian
-- name: skip if debian version is not supported
-  ansible.builtin.meta: end_host
-  when: ansible_facts['distribution_major_version'] not in ['12', '13']
-
 # debian-12 specific tasks
 # - name: postinstall tasks for debian-12
 #   when: ansible_facts['distribution_major_version'] == '12'
@@ -18,22 +13,14 @@
   ansible.posix.sysctl:
     name: "{{ item.name }}"
     value: "{{ item.value }}"
-    sysctl_file: "{{ tailscale_sysctl_file }}"
+    sysctl_file: "{{ tailscale_file_path.sysctl_file }}"
     state: present
     reload: true
   loop: "{{ tailscale_sysctl }}"
 
-# - name: disable upnp for tailscale
-#   ansible.builtin.lineinfile:
-#     path: "{{ tailscale_env_file }}"
-#     regexp: '^TS_DISABLE_UPNP='
-#     line: 'TS_DISABLE_UPNP=true'
-#   notify: restart tailscaled
-#   when: tailscale_disable_upnp | default(true) | bool
-
 - name: disable upnp and portmapper for tailscale
   ansible.builtin.lineinfile:
-    path: "{{ tailscale_env_file }}"
+    path: "{{ tailscale_file_path.env_file }}"
     regexp: '^{{ item.key }}='
     line: '{{ item.key }}={{ item.value }}'
     create: true
@@ -47,14 +34,14 @@
 
 - name: set tailscale config file using flags
   ansible.builtin.lineinfile:
-    path: "{{ tailscale_env_file }}"
+    path: "{{ tailscale_file_path.env_file }}"
     regexp: '^FLAGS='
-    line: 'FLAGS="--config={{ tailscale_config_file }}"'
+    line: 'FLAGS="--config={{ tailscale_file_path.config_file  }}"'
   notify: restart tailscaled
 
 - name: create tailscale configuration directory
   ansible.builtin.file:
-    path: "{{ tailscale_config_file | dirname }}"
+    path: "{{ tailscale_file_path.config_file | dirname }}"
     state: directory
     mode: '0755'
 
@@ -64,16 +51,21 @@
   register: tailscale_auth_key
 
 
-- name: copy tailscale "{{ tailscale_config_file }}"
+- name: copy tailscale "{{ tailscale_file_path.config_file  }}"
   ansible.builtin.template:
     src: tailscale_config.json.j2
-    dest: "{{ tailscale_config_file }}"
+    dest: "{{ tailscale_file_path.config_file }}"
     mode: '0644'
+  changed_when: true
   notify: restart tailscaled
 
-- name: write plex installed fact
+# required if include_role is used instead of import_role
+- name: flush handlers right now instead of waiting for the play to end
+  ansible.builtin.meta: flush_handlers
+
+- name: write tailscale installed fact
   community.general.ini_file:
-    path: /etc/ansible/facts.d/software.fact
+    path: "{{ tailscale_file_path.ansible_fact }}"
     section: tailscale
     option: installed
     value: "true"

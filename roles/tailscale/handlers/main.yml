@@ -4,3 +4,4 @@
   ansible.builtin.systemd:
     name: tailscaled
     state: restarted
+  no_log: true

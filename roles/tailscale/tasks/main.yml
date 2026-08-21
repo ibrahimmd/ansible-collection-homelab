@@ -1,8 +1,10 @@
 ---
 # tasks file for tailscale
-- name: gather local facts
-  ansible.builtin.setup:
-    filter: ansible_local
+- name: skip host if tailscale is already installed
+  ansible.builtin.meta: end_role
+  when:
+    - (ansible_local.software.tailscale.installed | default('false') | bool) == true
+    - (tailscale_force_install | default(false) | bool) != true
 
 - name: import tailscale variables specific to os distribution/family
   ansible.builtin.include_vars: "{{ item }}"
@@ -14,16 +16,7 @@
     - "{{ role_path }}/vars/default.yml"
 
 - name: install tailscale
+  ansible.builtin.include_tasks: run.yml
   when:
-    - tailscale_supported | default(false) == true
-    - ansible_local.software.tailscale.installed | default('false') | bool != true
-  block:
-    - name: preinstall tasks
-      ansible.builtin.import_tasks: preinstall.yml
-
-    - name: install tailscale
-      ansible.builtin.import_tasks: install.yml
-
-    - name: postinstall tasks
-      ansible.builtin.import_tasks: postinstall.yml
+    - (tailscale_supported | default(false) | bool) == true
 

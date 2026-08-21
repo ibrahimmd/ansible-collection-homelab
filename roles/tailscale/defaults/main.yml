@@ -1,26 +1,31 @@
 ---
 # defaults file for tailscale
 # NOTE: tailscale and mikrotik routers do not seem to play well with upnp
-#       tailsacle keep opening multiple upnp ports
+#       tailscale keep opening multiple upnp ports
+#       it gets more messy with multiple tailscale exit nodes in the same network
 tailscale_disable_upnp: true
 
-# NOTE: tailscale sends STUN to DERP servers, to determine ip and port,
+# NOTE: tailscale sends STUN to DERP servers, to determine ip and port
 #       2 firewall rules on mikrotik router seems to make things work
-#       action=masquerade,chain=srcnat and action=dst-nat,chain=dstnat
+#       - outgoing: action=masquerade,chain=srcnat
+#       - incoming: action=dst-nat,chain=dstnat
+
+# this has to be set on router, not handled by tailscale role
 tailscale_router_port: 41641
 
-tailscale_sysctl_file: "/etc/sysctl.d/99-tailscale.conf"
 tailscale_sysctl:
   - { name: net.ipv4.ip_forward, value: '1' }
   - { name: net.ipv6.conf.all.forwarding, value: '1' }
 
-tailscale_env_file: "/etc/default/tailscaled"
-tailscale_config_file: "/etc/tailscale/config.json"
+tailscale_file_path:
+  config_file: "/etc/tailscale/config.json"
+  env_file: "/etc/default/tailscaled"
+  sysctl_file: "/etc/sysctl.d/99-tailscale.conf"
+  ansible_fact: "/etc/ansible/facts.d/software.fact"
 
 tailscale_accept_routes: false
 tailscale_advertise_exit_node: true
 tailscale_advertise_routes:
   - "192.168.10.0/24"
-
 
 tailscale_force_install: false
