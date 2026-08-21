@@ -18,4 +18,7 @@ plex_media_dir_acl:
   - { etype: other, entity: "",   permissions: r-x, default: true }
   - { etype: mask,  entity: "",   permissions: rwx, default: true }
 
+plex_config_file_path:
+  ansible_fact: "/etc/ansible/facts.d/software.fact"
+
 plex_force_install: false
