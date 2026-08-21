@@ -4,3 +4,4 @@
   ansible.builtin.systemd:
     name: piaware
     state: restarted
+  when: flightaware_enabled | bool

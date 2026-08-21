@@ -1,7 +1,7 @@
 # preinstall tasks for debian
-- name: skip if debian version is not supported
-  ansible.builtin.meta: end_host
-  when: ansible_facts['distribution_major_version'] not in ['12', '13']
+# - name: skip if debian version is not supported
+#   ansible.builtin.meta: end_host
+#   when: ansible_facts['distribution_major_version'] not in ['12', '13']
 
 - name: create temp file for flightAware apt repository package
   ansible.builtin.tempfile:
