@@ -1,8 +1,41 @@
 ---
-# install prerequisite packages
+# preinstall tasks
 - name: install prerequisite packages
   ansible.builtin.package:
     name:
       - curl
       - gnupg2
     state: present
+
+- name: create temp file for plex signing key
+  ansible.builtin.tempfile:
+    state: file
+    suffix: plexkey
+  register: plex_key_tempfile
+
+- name: download plex signing key
+  ansible.builtin.get_url:
+    url: "{{ plex_signing_key_url }}"
+    dest: "{{ plex_key_tempfile.path }}"
+    mode: '0644'
+    force: true
+
+- name: dearmor plex signing key
+  ansible.builtin.command:
+    cmd: gpg --yes --dearmor -o {{ plex_signing_key_path }} {{ plex_key_tempfile.path }}
+  changed_when: true
+
+- name: remove temp signing key
+  ansible.builtin.file:
+    path: "{{ plex_key_tempfile.path }}"
+    state: absent
+
+- name: add plex repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by={{ plex_signing_key_path }}] https://repo.plex.tv/deb/ public main"
+    state: present
+    filename: "{{ plex_repo_file }}"
+
+- name: update apt cache
+  ansible.builtin.apt:
+    update_cache: true

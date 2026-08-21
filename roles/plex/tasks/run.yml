@@ -1,0 +1,13 @@
+---
+# install plex
+- name: preinstall tasks
+  ansible.builtin.import_tasks: preinstall.yml
+  tags: plex_preinstall
+
+- name: install plex server
+  ansible.builtin.import_tasks: install.yml
+  tags: plex_install
+
+- name: postinstall tasks
+  ansible.builtin.import_tasks: postinstall.yml
+  tags: plex_postinstall
