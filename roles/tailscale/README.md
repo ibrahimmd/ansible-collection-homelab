@@ -1,38 +1,81 @@
-Role Name
-=========
+# ibrahimmd.homelab.tailscale
 
-A brief description of the role goes here.
+Installs and configures Tailscale VPN on Debian-based systems.
 
-Requirements
-------------
+## Requirements
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- Raspberry Pi OS Bookworm (Debian 12) or Trixie (Debian 13)
+- Tailscale auth key - obtain it from https://console.tailscale.com/admin/settings/keys
+- `community.general` collection
 
-Role Variables
---------------
+## Dependencies
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+- `ibrahimmd.homelab.facts` — ensures `/etc/ansible/facts.d` exists
 
-Dependencies
-------------
+## Assumptions
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+- Role is only supported on Debian-based systems — unsupported OS families and versions will be skipped
 
-Example Playbook
-----------------
+## Role Variables
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+### Required
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+None
 
-License
--------
+### Optional
 
-MIT
+| Variable | Default | Description |
+|---|---|---|
+| `tailscale_disable_upnp` | `true` | Disable UPNP |
+| `tailscale_accept_routes` | `false` | Accept routes from tailscale peers |
+| `tailscale_advertise_exit_node` | `true` | Configure as exit node |
+| `tailscale_advertise_routes` | See below | Routes to advertise |
+| `tailscale_force_install` | `false` | Force reinstall even if already installed. Pass via CLI: `-e "tailscale_force_install=true"` |
 
-Author Information
-------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+#### `tailscale_advertise_routes`
+
+```yaml
+tailscale_advertise_routes:
+  - "192.168.10.0/24"
+```
+
+## Internal
+
+The following variables are defined in `vars/` and are not intended to be overridden:
+
+| Variable | Description |
+|---|---|
+| `tailscale_supported` | Set to `true` for supported OS families and versions |
+| `tailscale_signing_key_url` | GPG signing key url |
+| `tailscale_signing_key_path` | GPG singing key install path |
+| `tailscale_repo_file` | Debian APT repo file for tailscale |
+| `tailscale_package` | List of tailscale packages to install |
+| `tailscale_extra_packages` | List of additional packages to install |
+
+## Tags
+
+| Tag | Description |
+|---|---|
+| `tailscale_preinstall` | Setup apt repository and signing key |
+| `tailscale_install` | Install Tailscale VPN |
+| `tailscale_postinstall` | Disables UPNP, copies config file, restarts tailscale, writes fact |
+
+## Local Facts
+
+The role writes facts to `/etc/ansible/facts.d/software.fact` under the `tailscale` section:
+
+| Fact | Description |
+|---|---|
+| `ansible_local.software.tailscale.installed` | Set to `true` after successful install |
+
+On subsequent runs, if `ansible_local.software.tailscale.installed` is set, the install tasks are skipped automatically.
+
+
+## License
+
+MIT - see [LICENSE](../../LICENSE) for details.
+
+## Author
+
+ibrahim — [GitHub](https://github.com/ibrahimmd)
