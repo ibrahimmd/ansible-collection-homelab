@@ -1,25 +1,22 @@
 ---
 # tasks file for plex
-- name: skip host if plex is already installed
+- name: skip role if plex is already installed
   ansible.builtin.meta: end_role
   when:
     - (ansible_local.software.plex.installed | default('false') | bool) == true
     - (plex_force_install | default(false) | bool) == false
 
-- name: import plex variables specific to distribution
+- name: import plex variables specific to os distribution,family or version
   ansible.builtin.include_vars: "{{ item }}"
   with_first_found:
-    - "{{ role_path }}/vars/{{ ansible_facts['distribution'] | lower }}-{{ ansible_facts['distribution_version'] }}.yml"
-    - "{{ role_path }}/vars/{{ ansible_facts['distribution'] | lower }}-{{ ansible_facts['distribution_major_version'] }}.yml"
-    - "{{ role_path }}/vars/{{ ansible_facts['distribution'] | lower }}.yml"
-    # os_family is used as a fallback for distros which are not currently supported,
-    # but are based on a supported distro family.
-    # for example, rocky and alma linux, which are "redhat" based.
-    - "vars/{{ ansible_facts['os_family'] | lower }}-{{ ansible_facts['distribution_version'] }}.yml"
-    - "vars/{{ ansible_facts['os_family'] | lower }}-{{ ansible_facts['distribution_major_version'] }}.yml"
-    - "vars/{{ ansible_facts['os_family'] | lower }}.yml"
-    # if neither distro nor family is supported, try a default configuration.
-    - "{{ role_path }}/vars/default.yml"
+    - files:
+        - "{{ ansible_facts['os_family'] | lower }}-{{ ansible_facts['distribution'] | lower }}-{{ ansible_facts['distribution_version'] }}.yml"
+        - "{{ ansible_facts['os_family'] | lower }}-{{ ansible_facts['distribution'] | lower }}-{{ ansible_facts['distribution_major_version'] }}.yml"
+        - "{{ ansible_facts['os_family'] | lower }}-{{ ansible_facts['distribution'] | lower }}.yml"
+        - "{{ ansible_facts['os_family'] | lower }}.yml"
+        - "default.yml"
+      paths:
+        - "{{ role_path }}/vars"
 
 - name: install plex
   ansible.builtin.include_tasks: run.yml
