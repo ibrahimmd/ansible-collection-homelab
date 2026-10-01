@@ -1,0 +1,33 @@
+---
+# tasks file for k3s
+- name: skip role if k3s is already installed
+  ansible.builtin.meta: end_role
+  when:
+    - ansible_local.software.k3s.installed | default('false') | bool
+    - not k3s_force_install | default(false) | bool
+    - not k3s_upgrade | default(false) | bool
+
+- name: import k3s variables specific to os distribution,family or version
+  ansible.builtin.include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        - "{{ ansible_facts['os_family'] | lower }}-{{ ansible_facts['distribution'] | lower }}-{{ ansible_facts['distribution_version'] }}.yml"
+        - "{{ ansible_facts['os_family'] | lower }}-{{ ansible_facts['distribution'] | lower }}-{{ ansible_facts['distribution_major_version'] }}.yml"
+        - "{{ ansible_facts['os_family'] | lower }}-{{ ansible_facts['distribution'] | lower }}.yml"
+        - "{{ ansible_facts['os_family'] | lower }}.yml"
+        - "default.yml"
+      paths:
+        - "{{ role_path }}/vars"
+
+- name: install k3s
+  ansible.builtin.include_tasks: setup.yml
+  when:
+    - (k3s_supported | default(false) | bool) == true
+    - not k3s_upgrade | default(false) | bool
+
+- name: upgrade k3s
+  ansible.builtin.import_tasks: upgrade.yml
+  when:
+    - ansible_local.software.k3s.installed | default('false') | bool
+    - k3s_supported | default(false) | bool
+    - k3s_upgrade | default(false) | bool

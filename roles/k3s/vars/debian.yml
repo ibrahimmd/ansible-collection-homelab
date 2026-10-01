@@ -1,0 +1,3 @@
+---
+# debian os family
+k3s_supported: true

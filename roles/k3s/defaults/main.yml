@@ -1,0 +1,22 @@
+---
+# defaults file for k3s
+k3s_config_file_path:
+  ansible_fact: "/etc/ansible/facts.d/software.fact"
+
+# k3s config
+k3s_config:
+  flannel_backend: "none"
+  cluster_cidr: "10.42.0.0/16"
+  service_cidr: "10.43.0.0/16"
+  write_kubeconfig_mode: "644"
+  disable_kube_proxy: "true"
+  disable_network_policy: "true"
+  disable:
+    - servicelb
+    - traefik
+
+k3s_version:
+  k3s: ""
+  cilium: ""
+
+

@@ -1,0 +1,11 @@
+# {{ ansible_managed }}
+flannel-backend: "{{ k3s_config.flannel_backend }}"
+cluster-cidr: "{{ k3s_config.cluster_cidr }}"
+service-cidr: "{{ k3s_config.service_cidr }}"
+write-kubeconfig-mode: "{{ k3s_config.write_kubeconfig_mode }}"
+disable-kube-proxy: {{ k3s_config.disable_kube_proxy | lower }}
+disable-network-policy: {{ k3s_config.disable_network_policy | lower }}
+disable:
+{% for item in k3s_config.disable %}
+  - {{ item }}
+{% endfor %}
