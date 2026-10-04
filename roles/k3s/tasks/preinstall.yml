@@ -1,0 +1,14 @@
+---
+- name: ensure k3s config directory exists
+  ansible.builtin.file:
+    path: "{{ k3s_path.config_file | dirname }}"
+    state: directory
+    mode: '0755'
+
+- name: write k3s config
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: "{{ k3s_path.config_file }}"
+    owner: root
+    group: root
+    mode: '0644'

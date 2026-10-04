@@ -1,0 +1,12 @@
+---
+# defaults file for cilium
+cilium_path:
+  fact_file: "/etc/ansible/facts.d/software.fact"
+
+cilium_version: "xxx"
+
+# cilium config
+cilium_config:
+
+
+cilium_force_install: false

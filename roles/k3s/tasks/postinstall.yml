@@ -1,0 +1,20 @@
+---
+- name: write k3s installed fact
+  community.general.ini_file:
+    path: "{{ k3s_path.fact_file }}"
+    section: k3s
+    option: installed
+    value: "true"
+    mode: '0644'
+
+- name: write k3s version fact
+  community.general.ini_file:
+    path: "{{ k3s_path.fact_file }}"
+    section: k3s
+    option: version
+    value: "{{ k3s_version }}"
+    mode: '0644'
+
+- name: refresh local facts
+  ansible.builtin.setup:
+    filter: ansible_local

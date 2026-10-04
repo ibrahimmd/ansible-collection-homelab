@@ -1,0 +1,12 @@
+ipam:
+  mode: {{ cilium_config.ipam.mode }}
+operator:
+  replicas: 1
+kubeProxyReplacement: {{ cilium_config.kubeProxyReplacement }}
+k8sServiceHost: {{ cilium_config.k8sServiceHost }}
+k8sServicePort: {{ cilium_config.k8sServicePort }}
+devices: {{ cilium_config.devices }}
+routingMode: {{ cilium_config.routingMode }}
+tunnelProtocol: {{ cilium_config.tunnelProtocol }}
+socketLB:
+    enabled: {{ cilium_config.socketLB.enabled }}

@@ -1,0 +1,29 @@
+---
+- name: create temp file for k3s install script
+  ansible.builtin.tempfile:
+    state: file
+    suffix: .sh
+  register: k3s_install_script
+
+- name: download k3s install script
+  ansible.builtin.get_url:
+    url: https://get.k3s.io
+    dest: "{{ k3s_install_script.path }}"
+    mode: '0755'
+
+- name: install k3s
+  ansible.builtin.command:
+    cmd: "{{ k3s_install_script.path }}"
+  environment:
+    INSTALL_K3S_VERSION: "{{ k3s_version }}"
+  changed_when: true
+
+- name: remove k3s install script
+  ansible.builtin.file:
+    path: "{{ k3s_install_script.path }}"
+    state: absent
+
+- name: wait for k3s to be ready
+  ansible.builtin.wait_for:
+    path: "{{ k3s_path.node_token }}"
+    timeout: 60

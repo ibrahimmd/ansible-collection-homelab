@@ -1,7 +1,11 @@
 ---
 # defaults file for k3s
-k3s_config_file_path:
-  ansible_fact: "/etc/ansible/facts.d/software.fact"
+k3s_path:
+  fact_file: "/etc/ansible/facts.d/software.fact"
+  config_file: "/etc/rancher/k3s/config.yaml"
+  node_token: "/var/lib/rancher/k3s/server/node-token"
+
+k3s_version: "v1.37.1+k3s1"
 
 # k3s config
 k3s_config:
@@ -15,8 +19,4 @@ k3s_config:
     - servicelb
     - traefik
 
-k3s_version:
-  k3s: ""
-  cilium: ""
-
-
+k3s_force_install: false
