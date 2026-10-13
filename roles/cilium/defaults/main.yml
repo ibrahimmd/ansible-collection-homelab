@@ -7,6 +7,16 @@ cilium_version: "xxx"
 
 # cilium config
 cilium_config:
-
+  ipam:
+    mode: "cluster-pool"
+    operator:
+      clusterPoolIPv4PodCIDRList: "10.42.0.0/16"
+      clusterPoolIPv4MaskSize: 24
+  operator:
+    replicas: 1
+  kubeProxyReplacement: true
+  k8sServiceHost: "127.0.0.1"
+  k8sServicePort: "6443"
+  devices: "eth0"
 
 cilium_force_install: false
