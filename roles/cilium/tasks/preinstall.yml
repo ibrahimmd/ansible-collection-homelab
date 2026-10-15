@@ -1,1 +1,52 @@
 ---
+- name: ensure cilium config directory exists
+  ansible.builtin.file:
+    path: "{{ cilium_path.values_file | dirname }}"
+    state: directory
+    mode: '0755'
+
+- name: copy cilium helm values
+  ansible.builtin.template:
+    src: cilium-values.yaml.j2
+    dest: "{{ cilium_path.values_file }}"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: map system architecture to cilium cli naming convention
+  ansible.builtin.set_fact:
+    cilium_cli_arch: "{{ arch_map[ansible_facts['architecture']] | default('arm64') }}"
+  vars:
+    arch_map:
+      x86_64: "amd64"
+      aarch64: "arm64"
+
+- name: fetch latest cilium cli version string
+  ansible.builtin.uri:
+    url: https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt
+    return_content: true
+  register: cilium_cli_version_stable_file
+
+- name: map cilium cli dynamic version into a fact
+  ansible.builtin.set_fact:
+    cilium_cli_version: "{{ cilium_cli_version_stable_file.content | trim }}"
+
+- name: download and extract cilium CLI binary
+  ansible.builtin.unarchive:
+    src: "https://github.com/cilium/cilium-cli/releases/download/{{ cilium_cli_version }}/cilium-linux-{{ cilium_cli_arch }}.tar.gz"
+    dest: "{{ cilium_path.install_dir }}"
+    remote_src: true
+    mode: '0755'
+    owner: root
+    group: root
+  register: download_cli
+
+- name: verify cilium cli installation status
+  ansible.builtin.command: cilium version --client
+  changed_when: false
+  register: cilium_version_output
+
+- name: print installed cilium version
+  ansible.builtin.debug:
+    var: cilium_version_output.stdout
+

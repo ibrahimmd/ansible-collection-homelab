@@ -2,11 +2,13 @@
 # defaults file for cilium
 cilium_path:
   fact_file: "/etc/ansible/facts.d/software.fact"
+  values_file: "/etc/cilium/values.yaml"
+  install_dir: "/usr/local/bin"
 
-cilium_version: "xxx"
+# cilium cli version is always latest stable
+cilium_version: "1.20.2"
 
-# cilium config
-cilium_config:
+cilium_helm_values:
   ipam:
     mode: "cluster-pool"
     operator:

@@ -1,9 +1,9 @@
 ---
-# install k3s
+# setup cilium
 - name: preinstall tasks
   ansible.builtin.include_tasks: preinstall.yml
 
-- name: install flightaware
+- name: install cilium
   ansible.builtin.include_tasks: install.yml
 
 - name: postinstall tasks

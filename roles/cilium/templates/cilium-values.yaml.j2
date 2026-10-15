@@ -1,11 +1,1 @@
-ipam:
-  mode: {{ cilium_config.ipam.mode }}
-  operator:
-    clusterPoolIPv4PodCIDRList: {{ cilium_config.ipam.operator.clusterPoolIPv4PodCIDRList }}
-    clusterPoolIPv4MaskSize: {{ cilium_config.ipam.operator.clusterPoolIPv4MaskSize }}
-operator:
-  replicas: 1
-kubeProxyReplacement: {{ cilium_config.kubeProxyReplacement }}
-k8sServiceHost: {{ cilium_config.k8sServiceHost }}
-k8sServicePort: {{ cilium_config.k8sServicePort }}
-devices: {{ cilium_config.devices }}
+{{ cilium_helm_values | to_nice_yaml }}
